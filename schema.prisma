@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model State {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  slug      String    @unique
+  cities    City[]
+  profiles  Profile[]
+  createdAt DateTime  @default(now())
+}
+
+model City {
+  id        Int       @id @default(autoincrement())
+  name      String
+  slug      String    @unique
+  stateId   Int
+  state     State     @relation(fields: [stateId], references: [id], onDelete: Cascade)
+  profiles  Profile[]
+  createdAt DateTime  @default(now())
+}
+
+model Profile {
+  id          Int      @id @default(autoincrement())
+  name        String
+  slug        String   @unique
+  cityId      Int
+  stateId     Int
+  description String
+  images      String   @default("[]")
+  phone       String?
+  email       String?
+  age         Int?
+  featured    Boolean  @default(false)
+  city        City     @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  state       State    @relation(fields: [stateId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Gallery {
+  id        Int      @id @default(autoincrement())
+  imageUrl  String
+  caption   String?
+  createdAt DateTime @default(now())
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
